@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Leitura;
+use App\Models\Umidade;
+use App\Http\Controllers\MqttController;
 
 
 Route::get('/user', function (Request $request) {
@@ -11,13 +12,7 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('/umidade', function () {
-    return Leitura::latest()->take(10)->get();
+    return Umidade::latest()->take(10)->get();
 });
 
-Route::post('/set-limite', function (\Illuminate\Http\Request $request) {
-    $request->validate([
-        'limite' => 'required|integer|min:0|max:100'
-    ]);
-    // aqui você pode salvar no banco ou publicar via MQTT
-    return response()->json(['status' => 'ok', 'limite' => $request->limite]);
-});
+Route::post('/set-limite', [MqttController::class, 'setLimite']);

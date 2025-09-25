@@ -11,7 +11,7 @@ use App\Models\Umidade;
 class MqttListen extends Command
 {
 
-    protected $signature = 'mqtt:subscribe';
+    protected $signature = 'mqtt:listen';
     protected $description = 'Assina tópicos MQTT e salva os dados no banco';
 
     public function handle()
@@ -20,7 +20,7 @@ class MqttListen extends Command
         $port = 1883;
         $clientId = 'LaravelSubscriber_' . uniqid();
 
-        $connectionSettings = (new ConnectionsSettings);
+        $connectionSettings = (new ConnectionSettings);
 
         $mqtt = new MqttClient($server, $port, $clientId);
 
