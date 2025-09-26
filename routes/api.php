@@ -15,4 +15,9 @@ Route::get('/umidade', function () {
     return Umidade::latest()->take(10)->get();
 });
 
+Route::get('/limite', function () {
+    $limite = cache('hidrosense_limite', 40);
+    return response()->json(['limite' => $limite]);
+});
+
 Route::post('/set-limite', [MqttController::class, 'setLimite']);
