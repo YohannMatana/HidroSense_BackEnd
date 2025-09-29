@@ -188,11 +188,11 @@ export default function Dashboard() {
                     <Card className="p-6">
                         <h2 className="text-xl font-semibold mb-4">Configurar Limite</h2>
                             <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
-                                {dados.map((d) => (
-                                <p className="text-sm text-blue-600 dark:text-blue-400">
-                                    Limite atual: <span className="font-medium">{d.limite}%</span>
-                                </p>
-                                ))}
+                                {dados.length > 0 && (
+                                    <p className="text-sm text-blue-600 dark:text-blue-400">
+                                        Limite atual: <span className="font-medium">{dados[0].limite}%</span>
+                                    </p>
+                                )}
                             </div>
                         <form onSubmit={enviarLimite} className="space-y-4">
                             <div>
