@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\UmidadeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Umidade;
@@ -18,5 +19,7 @@ Route::get('/umidade', function () {
 Route::get('/limite', function () {
 
 });
+
+Route::get('/umidades', [UmidadeController::class, 'index'])->name('api.umidades');
 
 Route::post('/set-limite', [MqttController::class, 'setLimite']);
