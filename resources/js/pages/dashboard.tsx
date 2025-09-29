@@ -220,8 +220,8 @@ export default function Dashboard() {
                 {/* Área adicional para futuras expansões */}
                 <div className="relative min-h-[200px] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                     <div className="p-6">
-                        <h3 className="text-lg font-medium mb-2">Estatísticas</h3>
-                        <UmidadesChart url="/api/umidade" pollInterval={10000} />
+                        <h3 className="text-lg font-medium mb-2">Gráfico de Umidade</h3>
+                        <UmidadesChart url="/api/umidades" limit={10} />
                     </div>
                 </div>
             </div>

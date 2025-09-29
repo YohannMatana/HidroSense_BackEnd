@@ -229,7 +229,7 @@ chmod -R 755 storage bootstrap/cache
 
 ## 📈 Próximos Passos
 
-- [ ] Implementar gráficos de histórico
+- [X] Implementar gráficos de histórico
 - [ ] Adicionar alertas por email/SMS
 - [ ] Criar app mobile
 - [ ] Implementar múltiplos sensores

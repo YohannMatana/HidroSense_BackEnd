@@ -13,7 +13,7 @@ class UmidadeController extends Controller
         // Seleciona somente os campos necessários e ordena
         $dados = Umidade::select('id', 'valor', 'created_at')
             ->orderBy('created_at', 'asc')
-            ->latest(10)
+            // ->latest(10)
             ->get();
 
         // Opcional: transformar created_at para string ISO (facilita no frontend)
