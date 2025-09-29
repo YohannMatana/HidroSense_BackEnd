@@ -18,6 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface DadosUmidade {
     id: number;
     valor: number;
+    limite: number;
     created_at: string;
 }
 
@@ -186,13 +187,13 @@ export default function Dashboard() {
                     {/* Card de Configuração de Limite */}
                     <Card className="p-6">
                         <h2 className="text-xl font-semibold mb-4">Configurar Limite</h2>
-                        {limiteAtual !== null && (
                             <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
-                                <p className="text-sm text-blue-600 dark:text-blue-400">
-                                    Limite atual: <span className="font-medium">{limiteAtual}%</span>
-                                </p>
+                                {dados.length > 0 && (
+                                    <p className="text-sm text-blue-600 dark:text-blue-400">
+                                        Limite atual: <span className="font-medium">{dados[0].limite}%</span>
+                                    </p>
+                                )}
                             </div>
-                        )}
                         <form onSubmit={enviarLimite} className="space-y-4">
                             <div>
                                 <Label htmlFor="limite">Novo limite (%):</Label>

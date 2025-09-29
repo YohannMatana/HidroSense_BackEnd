@@ -27,8 +27,6 @@ class MqttController extends Controller
 
             $mqtt->disconnect();
 
-            cache(['hidrosense_limite' => $limite], now()->addDays(30));
-
             // Retorna JSON para API
             if ($request->expectsJson()) {
                 return response()->json([

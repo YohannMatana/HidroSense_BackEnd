@@ -9,11 +9,13 @@ class Umidade extends Model
     protected $table = 'umidades';
     
     protected $fillable = [
-        'valor'
+        'valor',
+        'limite'
     ];
     
     protected $casts = [
         'valor' => 'integer',
+        'limite' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
