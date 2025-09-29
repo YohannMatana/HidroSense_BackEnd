@@ -7,6 +7,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import React from "react";
+import UmidadesChart from "@/src/components/UmidadeChart";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -59,7 +61,7 @@ export default function Dashboard() {
             console.error("Erro ao buscar dados:", error);
             const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
             setError(`Falha ao carregar dados: ${errorMessage}`);
-            
+
             // Se houver erro durante auto-update, pausar para evitar spam de requests
             if (!showLoading && isAutoUpdate) {
                 setIsAutoUpdate(false);
@@ -143,11 +145,11 @@ export default function Dashboard() {
                                 </Button>
                             </div>
                         </div>
-                        
+
                         {/* Indicador de status */}
                         <div className="flex items-center gap-2 mb-3 text-sm text-gray-600 dark:text-gray-400">
                             <div className={`w-2 h-2 rounded-full ${
-                                error ? 'bg-red-500' : 
+                                error ? 'bg-red-500' :
                                 isAutoUpdate ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
                             }`}></div>
                             <span>
@@ -156,14 +158,14 @@ export default function Dashboard() {
                                 {lastUpdate && ` • Última atualização: ${lastUpdate.toLocaleTimeString()}`}
                             </span>
                         </div>
-                        
+
                         {/* Exibir erro se houver */}
                         {error && (
                             <div className="mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
                                 <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
                             </div>
                         )}
-                        
+
                         <div className="max-h-96 overflow-y-auto">
                             {dados.length > 0 ? (
                                 <ul className="space-y-2">
@@ -219,9 +221,7 @@ export default function Dashboard() {
                 <div className="relative min-h-[200px] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                     <div className="p-6">
                         <h3 className="text-lg font-medium mb-2">Estatísticas</h3>
-                        <p className="text-gray-600 dark:text-gray-400">
-                            Área reservada para gráficos e estatísticas futuras
-                        </p>
+                        <UmidadesChart url="/api/umidade" pollInterval={10000} />
                     </div>
                 </div>
             </div>
