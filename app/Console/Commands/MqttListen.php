@@ -32,9 +32,14 @@ class MqttListen extends Command
             $this->info("Recebido em [$topic]: $message");
 
             //salva no banco
-            Umidade::create([
-                'valor' => (int)$message,
+           $umidade = Umidade::create([
+                'valor' => (int)$message
             ]);
+        }, 0);
+
+        //assina o topico de limite 
+        $mqtt->subscribe('hidrosense/limite', function(string $topic, string $message) {
+            $this->info("Recebido em [$topic]: $message");
         }, 0);
 
         //Loop pra manter rodando

@@ -12,7 +12,7 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('/umidade', function () {
-    return Umidade::latest()->take(10)->get();
+    return Umidade::latest()->take(4)->get();
 });
 
 Route::get('/limite', function () {
