@@ -12,12 +12,11 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('/umidade', function () {
-    return Umidade::latest()->take(10)->get();
+    return Umidade::latest()->take(4)->get();
 });
 
 Route::get('/limite', function () {
-    $limite = cache('hidrosense_limite', 40);
-    return response()->json(['limite' => $limite]);
+
 });
 
 Route::post('/set-limite', [MqttController::class, 'setLimite']);
