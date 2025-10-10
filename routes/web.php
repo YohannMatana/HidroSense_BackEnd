@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\UmidadeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\MqttController;
@@ -22,6 +23,7 @@ Route::get('/umidade', function () {
 
 Route::post('/set-limite', [MqttController::class, 'setLimite']);
 
+Route::get('send-telegram', [UmidadeController::class, 'send'])->name('telegram');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

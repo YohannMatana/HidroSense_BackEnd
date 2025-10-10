@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Umidade;
 use Illuminate\Http\Request;
+use App\Services\TelegramService;
 
 class UmidadeController extends Controller
 {
@@ -26,5 +27,21 @@ class UmidadeController extends Controller
         });
 
         return response()->json($dados);
+    }
+
+    public function send($message)
+    {
+        $telegram = new TelegramService();
+
+        $chatId = '5377587183';
+
+        $response = $telegram->sendMessage($chatId, $message);
+
+        return $response->json();
+    }
+
+    public function turnOn()
+    {
+
     }
 }

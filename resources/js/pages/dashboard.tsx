@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
@@ -32,9 +32,14 @@ export default function Dashboard() {
     const [isLoading, setIsLoading] = useState(false);
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [pumpNotified, setPumpNotified] = useState(false);
+    const [sendingPump, setSendingPump] = useState(false);
+    const [limiteDesligar, setLimiteDesligar] = useState<number | null>(null);
+    const [pumpState, setPumpState] = useState<'ON' | 'OFF' | null>(null);
+    const [pumpLastActionAt, setPumpLastActionAt] = useState<Date | null>(null);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const buscarLimiteAtual = async () => {
+    const buscarLimiteAtual = useCallback(async () => {
         try {
             const response = await fetch('/api/limite');
             if (response.ok) {
@@ -44,9 +49,9 @@ export default function Dashboard() {
         } catch (error) {
             console.error('Erro ao buscar limite atual:', error);
         }
-    };
+    }, []);
 
-    const buscarDados = async (showLoading = false) => {
+    const buscarDados = useCallback(async (showLoading = false) => {
         if (showLoading) setIsLoading(true);
         try {
             const response = await fetch("/api/umidade");
@@ -69,13 +74,71 @@ export default function Dashboard() {
         } finally {
             if (showLoading) setIsLoading(false);
         }
-    };
+    }, [isAutoUpdate]);
 
     useEffect(() => {
         // Buscar dados iniciais
         buscarDados(true);
         buscarLimiteAtual();
-    }, []);
+        // carregar limiteDesligar do localStorage
+        try {
+            const raw = localStorage.getItem('limiteDesligar');
+            if (raw) setLimiteDesligar(Number(raw));
+        } catch {
+            // ignore
+        }
+    }, [buscarDados, buscarLimiteAtual]);
+
+    // Detecta quando a bomba deve ser ligada/desligada e notifica o servidor via /api/send-telegram
+    useEffect(() => {
+        const latest = dados.length > 0 ? Number(dados[0].valor) : null;
+        const lim = limiteAtual;
+
+        // Assumimos: ligar bomba quando umidade < limiteAtual (seca)
+        const shouldActivate = latest !== null && lim !== null && latest < lim;
+        // Desligar quando umidade sobe acima de limiteDesligar (se configurado)
+        const shouldDeactivate = limiteDesligar !== null && latest !== null && latest >= limiteDesligar;
+
+        // Prioridade: se shouldDeactivate é verdadeiro, enviar OFF
+        if (shouldDeactivate && pumpNotified !== false && !sendingPump) {
+            setSendingPump(true);
+            fetch('/api/send-telegram', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ umidade: latest, limite: limiteDesligar, action: 'OFF' }),
+            })
+                .then((res) => res.json())
+                .then((json) => {
+                    console.debug('send-telegram OFF response', json);
+                    setPumpNotified(false);
+                    setPumpState('OFF');
+                    setPumpLastActionAt(new Date());
+                })
+                .catch((err) => console.error('Erro ao enviar send-telegram OFF:', err))
+                .finally(() => setSendingPump(false));
+            return;
+        }
+
+        if (shouldActivate && !pumpNotified && !sendingPump) {
+            setSendingPump(true);
+            fetch('/api/send-telegram', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ umidade: latest, limite: lim, action: 'ON' }),
+            })
+                .then((res) => res.json())
+                .then((json) => {
+                    console.debug('send-telegram ON response', json);
+                    setPumpNotified(true);
+                    setPumpState('ON');
+                    setPumpLastActionAt(new Date());
+                })
+                .catch((err) => console.error('Erro ao enviar send-telegram ON:', err))
+                .finally(() => setSendingPump(false));
+        }
+
+        // se condição não indica ativação nem desativação, não alteramos o estado
+    }, [dados, limiteAtual, limiteDesligar, pumpNotified, sendingPump]);
 
     useEffect(() => {
         if (isAutoUpdate) {
@@ -98,7 +161,7 @@ export default function Dashboard() {
                 intervalRef.current = null;
             }
         };
-    }, [isAutoUpdate]);
+    }, [isAutoUpdate, buscarDados]);
 
     const enviarLimite = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -126,7 +189,17 @@ export default function Dashboard() {
                     {/* Card de Dados de Umidade */}
                     <Card className="p-6">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-semibold">Monitor de Umidade</h2>
+                            <div className="flex items-center gap-3">
+                                <h2 className="text-xl font-semibold">Monitor de Umidade</h2>
+                                {pumpState && (
+                                    <div className={`px-2 py-1 rounded text-sm font-medium ${pumpState === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                        Bomba: {pumpState}
+                                    </div>
+                                )}
+                                {pumpLastActionAt && (
+                                    <div className="text-xs text-gray-500 ml-2">{pumpLastActionAt.toLocaleTimeString()}</div>
+                                )}
+                            </div>
                             <div className="flex items-center gap-2">
                                 <Button
                                     variant={isAutoUpdate ? "default" : "outline"}
@@ -214,6 +287,37 @@ export default function Dashboard() {
                                 Enviar Limite
                             </Button>
                         </form>
+                        <div className="mt-4">
+                            <Label htmlFor="limiteDesligar">Limiar de desligamento (%):</Label>
+                            <div className="flex items-center gap-2 mt-2">
+                                <Input
+                                    id="limiteDesligar"
+                                    type="number"
+                                    min={0}
+                                    max={100}
+                                    value={limiteDesligar ?? ''}
+                                    onChange={(e) => setLimiteDesligar(e.target.value ? Number(e.target.value) : null)}
+                                    placeholder="Ex: 65"
+                                />
+                                <Button
+                                    type="button"
+                                    onClick={() => {
+                                        try {
+                                            if (limiteDesligar === null) {
+                                                localStorage.removeItem('limiteDesligar');
+                                            } else {
+                                                localStorage.setItem('limiteDesligar', String(limiteDesligar));
+                                            }
+                                            alert('Limiar de desligamento salvo');
+                                        } catch (err) {
+                                            console.error(err);
+                                            alert('Erro ao salvar limiar');
+                                        }
+                                    }}
+                                >Salvar
+                                </Button>
+                            </div>
+                        </div>
                     </Card>
                 </div>
 

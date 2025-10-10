@@ -23,3 +23,5 @@ Route::get('/limite', function () {
 Route::get('/umidades', [UmidadeController::class, 'index'])->name('api.umidades');
 
 Route::post('/set-limite', [MqttController::class, 'setLimite']);
+
+Route::post('/send-telegram', [\App\Http\Controllers\Api\TelegramController::class, 'send']);
