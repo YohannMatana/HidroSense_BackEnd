@@ -44,57 +44,42 @@ export default function Welcome() {
                         )}
                     </nav>
                 </header>
-                <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
+                <div className="flex items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
                     <main className="flex w-full max-w-[335px] flex-col-reverse lg:max-w-4xl lg:flex-row">
 
-                        <div className="relative -mb-px aspect-[335/376] w-full shrink-0 overflow-hidden rounded-t-lg bg-[#fff2f2] lg:mb-0 lg:-ml-px lg:aspect-auto lg:w-[438px] lg:rounded-t-none lg:rounded-r-lg dark:bg-[#1D0002]">
-                            <svg
-                                className="w-full max-w-none translate-y-0 text-[#F53003] opacity-100 transition-all duration-750 dark:text-[#F61500] starting:translate-y-6 starting:opacity-0"
-                                viewBox="0 0 438 104"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
+                        <div className="relative -mb-px aspect-[335/376] w-full shrink-0 overflow-hidden rounded-lg bg-gray-200 lg:mb-0 lg:-ml-px lg:aspect-auto lg:w-[438px] lg:rounded-l-lg lg:rounded-r-lg dark:bg-gray-400 flex items-center justify-center">
+                            <div
+                                className="w-full max-w-none translate-y-0 text-[#F53003] opacity-100 transition-all duration-750 dark:text-[#F61500] starting:translate-y-6 starting:opacity-0 absolute top-0 left-0"
                             >
                                 {/* Text HidroSense */}
-                            </svg>
-                            <svg
-                                className="relative -mt-[4.9rem] -ml-8 w-[448px] max-w-none lg:-mt-[6.6rem] lg:ml-0 dark:hidden"
-                                viewBox="0 0 440 376"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
+                            </div>
+                            <div
+                                className=" w-[280px] h-[220px] lg:w-[448px] lg:h-[376px] dark:hidden flex items-center justify-center"
                             >
-                                
-                                <g className="translate-y-0 opacity-100 transition-all delay-300 duration-750 starting:translate-y-4 starting:opacity-0">
-                                {/* Light HidroSense Logo */}
-                                </g>
-
-                                <g
-                                    style={{ mixBlendMode: 'hard-light' }}
-                                    className="translate-y-0 opacity-100 transition-all delay-300 duration-750 starting:translate-y-4 starting:opacity-0"
-                                >
-                                    {/* Light HidroSense Logo2 */}
-                                </g>
-                            </svg>
-                            <svg
-                                className="relative -mt-[4.9rem] -ml-8 hidden w-[448px] max-w-none lg:-mt-[6.6rem] lg:ml-0 dark:block"
-                                viewBox="0 0 440 376"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
+                                <div className="translate-y-0 opacity-100 transition-all delay-300 duration-750 starting:translate-y-4 starting:opacity-0">
+                                    <img
+                                        src="/images/tiny-hidrosense-LOGO-nobg-500x500.png"
+                                        width="350"
+                                        height="350"
+                                        className="max-w-[240px] max-h-[240px] lg:max-w-[350px] lg:max-h-[350px]"
+                                        alt="HidroSense Logo"
+                                    />
+                                </div>
+                            </div>
+                            <div
+                                className="hidden w-[280px] h-[220px] lg:w-[448px] lg:h-[376px] dark:flex items-center justify-center"
                             >
-                                <g
-                                    className="translate-y-0 opacity-100 transition-all delay-300 duration-750 starting:translate-y-4 starting:opacity-0"
-                                    style={{ mixBlendMode: 'hard-light' }}
-                                    >
-                                    {/* Dark HidroSense Logo */}
-
-                                </g>
-                                <g
-                                    className="translate-y-0 opacity-100 transition-all delay-300 duration-750 starting:translate-y-4 starting:opacity-0"
-                                    style={{ mixBlendMode: 'hard-light' }}
-                                >
-                                    {/* Dark HidroSense Logo2 */}
-                                </g>
-                            </svg>
-                            <div className="absolute inset-0 rounded-t-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-t-none lg:rounded-r-lg dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]" />
+                                <div className="translate-y-0 opacity-100 transition-all delay-300 duration-750 starting:translate-y-4 starting:opacity-0">
+                                    <img
+                                        src="/images/tiny-hidrosense-LOGO-nobg-500x500.png"
+                                        width="350"
+                                        height="350"
+                                        className="max-w-[240px] max-h-[240px] lg:max-w-[350px] lg:max-h-[350px]"
+                                        alt="HidroSense Logo"
+                                    />
+                                </div>
+                            </div>
+                            <div className="absolute inset-0 rounded-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-l-lg lg:rounded-r-lg dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]" />
                         </div>
                     </main>
                 </div>
@@ -103,3 +88,6 @@ export default function Welcome() {
         </>
     );
 }
+
+
+
