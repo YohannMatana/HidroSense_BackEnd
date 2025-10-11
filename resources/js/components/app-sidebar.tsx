@@ -14,11 +14,11 @@ import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
-import AppLogo from './app-logo';
+import AppLogoSideBar from './app-logo-sidebar';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Painel',
         href: dashboard(),
         icon: LayoutGrid,
     },
@@ -26,13 +26,13 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
+        title: 'Repositório',
+        href: 'https://github.com/YohannMatana/HidroSense_BackEnd',
         icon: Folder,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
+        title: 'Documentação',
+        href: 'https://github.com/YohannMatana/HidroSense_BackEnd/blob/master/README.md',
         icon: BookOpen,
     },
 ];
@@ -45,7 +45,7 @@ export function AppSidebar() {
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href={dashboard()} prefetch>
-                                <AppLogo />
+                                <AppLogoSideBar />
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
