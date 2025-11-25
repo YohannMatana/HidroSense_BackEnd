@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\UmidadeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Umidade;
 use App\Http\Controllers\MqttController;
+
+
+Route::post('/sensores', [UmidadeController::class, 'storeUmidade']);
 
 
 Route::get('/user', function (Request $request) {
@@ -15,8 +19,11 @@ Route::get('/umidade', function () {
     return Umidade::latest()->take(4)->get();
 });
 
-Route::get('/limite', function () {
+Route::get('/', function () {
+    return 'API de dados de umidade';
 
 });
+
+Route::get('/umidades', [UmidadeController::class, 'index'])->name('api.umidades');
 
 Route::post('/set-limite', [MqttController::class, 'setLimite']);

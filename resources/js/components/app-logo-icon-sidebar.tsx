@@ -1,14 +1,14 @@
 import { ImgHTMLAttributes } from 'react';
 
-export default function AppLogoIcon(props: ImgHTMLAttributes<HTMLImageElement>) {
+export default function AppLogoIconSideBar(props: ImgHTMLAttributes<HTMLImageElement>) {
     const { className = '', ...restProps } = props;
     
     const getSizeStyles = () => {
-        if (className.includes('size-9')) return { width: '160px', height: '160px' };
-        if (className.includes('size-8')) return { width: '144px', height: '144px' };
-        if (className.includes('h-10')) return { width: '192px', height: '192px' };
-        if (className.includes('h-12')) return { width: '240px', height: '240px' };
-        return { width: '144px', height: '144px' }; 
+        if (className.includes('size-9')) return { width: '32px', height: '32px' };
+        if (className.includes('size-8')) return { width: '28px', height: '28px' };
+        if (className.includes('h-10')) return { width: '36px', height: '36px' };
+        if (className.includes('h-12')) return { width: '40px', height: '40px' };
+        return { width: '28px', height: '28px' }; // padrão bem pequeno
     };
 
     const sizeStyles = getSizeStyles();
@@ -22,14 +22,13 @@ export default function AppLogoIcon(props: ImgHTMLAttributes<HTMLImageElement>) 
     return (
         <img 
             {...restProps}
-            src="/images/tiny-hidrosense-LOGO-nobg-500x500.png" 
+            src="/images/tiny-hidrosense-LOGO-nobg-gota.png" 
             alt="HidroSense Logo"
             className={`object-contain ${cleanClassName}`}
             style={{
                 width: sizeStyles.width,
                 height: sizeStyles.height,
                 maxWidth: 'none',
-                marginBottom: '100px',
                 ...props.style
             }}
         />
