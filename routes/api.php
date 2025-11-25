@@ -7,6 +7,9 @@ use App\Models\Umidade;
 use App\Http\Controllers\MqttController;
 
 
+Route::post('/sensores', [UmidadeController::class, 'storeUmidade']);
+
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -16,7 +19,8 @@ Route::get('/umidade', function () {
     return Umidade::latest()->take(4)->get();
 });
 
-Route::get('/limite', function () {
+Route::get('/', function () {
+    return 'API de dados de umidade';
 
 });
 
