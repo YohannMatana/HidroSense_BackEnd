@@ -18,7 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface DadosUmidade {
-    rssi: ReactNode;
+    rssi: number;
     id: number;
     valor: number;
     limite: number;
@@ -34,6 +34,12 @@ export default function Dashboard() {
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
     const [error, setError] = useState<string | null>(null);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const classificarRSSI = (rssi: number) => {
+        if (rssi > -85) return { texto: "Ótimo", cor: "text-green-600 dark:text-green-400" };
+        if (rssi >= -115) return { texto: "Mediano", cor: "text-yellow-600 dark:text-yellow-400" };
+        return { texto: "Ruim", cor: "text-red-600 dark:text-red-400" };
+    };
 
     const buscarLimiteAtual = async () => {
         try {
@@ -177,25 +183,28 @@ export default function Dashboard() {
                                     Umidade
                                 </div>
                                 <div className="w-1/3 text-medium text-blue-600 dark:text-blue-400 text-right">
-                                    Qualidade do sinal
+                                    Sinal
                                 </div>
                             </div>
 
                             {dados.length > 0 ? (
                                 <div className="space-y-2">
-                                    {dados.map((d) => (
-                                        <div key={d.id} className="flex p-2 bg-gray-50 dark:bg-gray-800 rounded">
-                                            <div className="w-1/3 text-sm text-gray-600 dark:text-gray-400">
-                                                {new Date(d.created_at).toLocaleString()}
+                                    {dados.map((d) => {
+                                        const status = classificarRSSI(d.rssi);
+                                        return (
+                                            <div key={d.id} className="flex p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                                                <div className="w-1/3 text-sm text-gray-600 dark:text-gray-400">
+                                                    {new Date(d.created_at).toLocaleString()}
+                                                </div>
+                                                <div className="w-1/3 font-medium text-blue-600 dark:text-blue-400 text-center">
+                                                    {d.valor}%
+                                                </div>
+                                                <div className={`w-1/3 font-medium text-right ${status.cor}`}>
+                                                    {d.rssi} ({status.texto})
+                                                </div>
                                             </div>
-                                            <div className="w-1/3 font-medium text-blue-600 dark:text-blue-400 text-center">
-                                                {d.valor}%
-                                            </div>
-                                            <div className="w-1/3 font-medium text-blue-600 dark:text-blue-400 text-right">
-                                                {d.rssi}
-                                            </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             ) : (
                                 <p className="text-gray-500 dark:text-gray-400 p-2">Nenhum dado disponível</p>
