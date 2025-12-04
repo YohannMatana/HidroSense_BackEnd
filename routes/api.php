@@ -19,6 +19,10 @@ Route::get('/umidade', function () {
     return Umidade::latest()->take(4)->get();
 });
 
+Route::get('/node/{id}', function (Request $request) {
+    return Umidade::select('id', 'valor', 'rssi', 'created_at')->where('node_id', $request->id)->latest()->take(4)->get();
+});
+
 Route::get('/', function () {
     return 'API de dados de umidade';
 

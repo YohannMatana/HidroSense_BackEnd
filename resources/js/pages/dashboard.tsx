@@ -18,6 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface DadosUmidade {
+    rssi: number;
     id: number;
     valor: number;
     limite: number;
@@ -33,6 +34,12 @@ export default function Dashboard() {
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
     const [error, setError] = useState<string | null>(null);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const classificarRSSI = (rssi: number) => {
+        if (rssi > -85) return { texto: "Ótimo", cor: "text-green-600 dark:text-green-400" };
+        if (rssi >= -115) return { texto: "Mediano", cor: "text-yellow-600 dark:text-yellow-400" };
+        return { texto: "Ruim", cor: "text-red-600 dark:text-red-400" };
+    };
 
     const buscarLimiteAtual = async () => {
         try {
@@ -55,6 +62,7 @@ export default function Dashboard() {
             }
             const data = await response.json();
             setDados(data);
+            console.log(data);
             setLastUpdate(new Date());
             setError(null); // Limpar erro em caso de sucesso
         } catch (error) {
@@ -148,13 +156,12 @@ export default function Dashboard() {
 
                         {/* Indicador de status */}
                         <div className="flex items-center gap-2 mb-3 text-sm text-gray-600 dark:text-gray-400">
-                            <div className={`w-2 h-2 rounded-full ${
-                                error ? 'bg-red-500' :
+                            <div className={`w-2 h-2 rounded-full ${error ? 'bg-red-500' :
                                 isAutoUpdate ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
-                            }`}></div>
+                                }`}></div>
                             <span>
                                 {error ? 'Erro na conexão' :
-                                 isAutoUpdate ? 'Atualizando automaticamente' : 'Atualização pausada'}
+                                    isAutoUpdate ? 'Atualizando automaticamente' : 'Atualização pausada'}
                                 {lastUpdate && ` • Última atualização: ${lastUpdate.toLocaleTimeString()}`}
                             </span>
                         </div>
@@ -167,21 +174,40 @@ export default function Dashboard() {
                         )}
 
                         <div className="max-h-96 overflow-y-auto">
+                            {/* Cabeçalho */}
+                            <div className="flex p-2 rounded mb-2">
+                                <div className="w-1/3 text-medium text-blue-600 dark:text-blue-400">
+                                    Horário
+                                </div>
+                                <div className="w-1/3 text-medium text-blue-600 dark:text-blue-400 text-center">
+                                    Umidade
+                                </div>
+                                <div className="w-1/3 text-medium text-blue-600 dark:text-blue-400 text-right">
+                                    Sinal
+                                </div>
+                            </div>
+
                             {dados.length > 0 ? (
-                                <ul className="space-y-2">
-                                    {dados.map((d) => (
-                                        <li key={d.id} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
-                                            <span className="text-sm text-gray-600 dark:text-gray-400">
-                                                {new Date(d.created_at).toLocaleString()}
-                                            </span>
-                                            <span className="font-medium text-blue-600 dark:text-blue-400">
-                                                {d.valor}%
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <div className="space-y-2">
+                                    {dados.map((d) => {
+                                        const status = classificarRSSI(d.rssi);
+                                        return (
+                                            <div key={d.id} className="flex p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                                                <div className="w-1/3 text-sm text-gray-600 dark:text-gray-400">
+                                                    {new Date(d.created_at).toLocaleString()}
+                                                </div>
+                                                <div className="w-1/3 font-medium text-blue-600 dark:text-blue-400 text-center">
+                                                    {d.valor}%
+                                                </div>
+                                                <div className={`w-1/3 font-medium text-right ${status.cor}`}>
+                                                    {d.rssi} ({status.texto})
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             ) : (
-                                <p className="text-gray-500 dark:text-gray-400">Nenhum dado disponível</p>
+                                <p className="text-gray-500 dark:text-gray-400 p-2">Nenhum dado disponível</p>
                             )}
                         </div>
                     </Card>
@@ -189,13 +215,13 @@ export default function Dashboard() {
                     {/* Card de Configuração de Limite */}
                     <Card className="p-6">
                         <h2 className="text-xl font-semibold mb-4">Configurar Limite</h2>
-                            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
-                                {dados.length > 0 && (
-                                    <p className="text-sm text-blue-600 dark:text-blue-400">
-                                        Limite atual: <span className="font-medium">{dados[0].limite}%</span>
-                                    </p>
-                                )}
-                            </div>
+                        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                            {dados.length > 0 && (
+                                <p className="text-sm text-blue-600 dark:text-blue-400">
+                                    Limite atual: <span className="font-medium">{dados[0].limite}%</span>
+                                </p>
+                            )}
+                        </div>
                         <form onSubmit={enviarLimite} className="space-y-4">
                             <div>
                                 <Label htmlFor="limite">Novo limite (%):</Label>
@@ -221,7 +247,7 @@ export default function Dashboard() {
                 <div className="relative min-h-[200px] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                     <div className="p-6">
                         <h3 className="text-lg font-medium mb-2">Gráfico de Umidade</h3>
-                        <UmidadesChart url="/api/umidades" limit={10} pollInterval={ isAutoUpdate ? 5000 : 0 } />
+                        <UmidadesChart url="/api/umidades" limit={10} pollInterval={isAutoUpdate ? 5000 : 0} />
                     </div>
                 </div>
             </div>
